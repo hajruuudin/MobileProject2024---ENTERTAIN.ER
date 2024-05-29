@@ -32,12 +32,6 @@ data class UserMovie(
     val id: Int = 0,
     val userId: Int,
     val movieId: Int,
-    val watched: Boolean,
-    val watchlist: Boolean,
-    val title: String,
-    val genre: MovieCategories,
-    val director: String,
-    val duration: Int,
-    val actors: String,
-    val rating: String
+    val watched: Boolean = false,
+    val watchlist: Boolean = false
 )

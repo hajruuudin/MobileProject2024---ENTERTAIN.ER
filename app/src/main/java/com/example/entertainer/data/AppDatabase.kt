@@ -6,7 +6,7 @@ import com.example.entertainer.data.UserMovieDao
 
 @Database(
     entities = [User::class, Movie::class, UserMovie::class],
-    version = 1
+    version = 6
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao() : UserDao

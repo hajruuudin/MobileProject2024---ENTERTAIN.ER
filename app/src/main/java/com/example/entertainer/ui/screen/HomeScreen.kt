@@ -19,13 +19,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.entertainer.data.DatabaseProvider
 import com.example.entertainer.model.MovieCategories
@@ -36,15 +39,19 @@ import com.example.entertainer.ui.components.Navbar
 import com.example.entertainer.ui.theme.Light
 import com.example.entertainer.ui.theme.Typography
 import com.example.entertainer.ui.theme.UIBackground
-import com.example.entertainer.viewmodel.HomeScreenModelFactory
 import com.example.entertainer.viewmodel.HomeScreenViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     navController: NavController,
-    viewModel: HomeScreenViewModel
+    viewModel: HomeScreenViewModel = viewModel()
 ){
+    DisposableEffect(Unit){
+        onDispose {
+            viewModel.updateMovies()
+        }
+    }
 
     Scaffold(
         bottomBar = {
@@ -113,8 +120,12 @@ fun HomeScreen(
 
                 LazyRow(){
                     items(viewModel.movies) {movie ->
-                        MovieCardSmall(movie)
-
+                        MovieCardSmall(
+                            movie = movie,
+                            onCardClick = {
+                                navController.navigate(Screen.ItemInfoScreen.route + "/" + movie.id)
+                            }
+                        )
                         Spacer(modifier = Modifier.width(15.dp))
                     }
                 }
@@ -131,7 +142,12 @@ fun HomeScreen(
 
                 LazyRow(){
                     items(viewModel.movies) {movie ->
-                        MovieCardSmall(movie)
+                        MovieCardSmall(
+                            movie = movie,
+                            onCardClick = {
+                                navController.navigate(Screen.ItemInfoScreen.route + "/" + movie.id)
+                            }
+                        )
 
                         Spacer(modifier = Modifier.width(15.dp))
                     }

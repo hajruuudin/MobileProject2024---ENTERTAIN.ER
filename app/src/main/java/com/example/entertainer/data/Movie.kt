@@ -14,5 +14,6 @@ data class Movie(
     val director: String,
     val duration: Int,
     val actors: String,
-    val rating: String
+    val rating: String,
+    val image: ByteArray?
 )
