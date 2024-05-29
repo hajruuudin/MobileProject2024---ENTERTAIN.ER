@@ -14,5 +14,6 @@ data class User(
     val surname: String,
     val email: String,
     val password: String,
-    val favourite: MovieCategories
+    val favourite: MovieCategories,
+    val isAdmin: Boolean
 )

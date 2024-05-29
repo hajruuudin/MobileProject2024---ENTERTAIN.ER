@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.entertainer.R
 import com.example.entertainer.data.Movie
+import com.example.entertainer.data.UserMovie
 import com.example.entertainer.ui.theme.DarkBg
 import com.example.entertainer.ui.theme.DarkHard
 import com.example.entertainer.ui.theme.InputBg
@@ -52,6 +53,7 @@ import com.example.entertainer.ui.theme.Light
 import com.example.entertainer.ui.theme.NavbarBg
 import com.example.entertainer.ui.theme.Typography
 import com.example.entertainer.model.MovieCategories
+import com.example.entertainer.ui.theme.DarkSoft
 
 @Composable
 fun LogoAndHeading() {
@@ -80,6 +82,76 @@ fun GenericTextField(
     TextField(
         modifier = Modifier
             .border(width = 3.dp, color = DarkHard, shape = RoundedCornerShape(15.dp)),
+        value = value,
+        label = {
+            Text(
+                text = label,
+                color = Light,
+                fontFamily = KubhmSansFont,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+        },
+        onValueChange = onValueChange,
+        shape = RoundedCornerShape(15.dp),
+        textStyle = TextStyle.Default.copy(
+            fontFamily = KubhmSansFont,
+            fontSize = 20.sp,
+            color = Light
+        ),
+        colors = TextFieldDefaults.colors(
+            unfocusedContainerColor = DarkBg,
+            focusedContainerColor = InputBg,
+            focusedLabelColor = DarkBg,
+            focusedTextColor = Light,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        ),
+        keyboardOptions = keyboardOptions
+    )
+}
+
+@Composable
+fun ImmutableTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    keyboardOptions: KeyboardOptions
+) {
+    TextField(
+        modifier = Modifier
+            .border(width = 3.dp, color = DarkHard, shape = RoundedCornerShape(15.dp)),
+        value = value,
+        readOnly = true,
+        onValueChange = onValueChange,
+        shape = RoundedCornerShape(15.dp),
+        textStyle = TextStyle.Default.copy(
+            fontFamily = KubhmSansFont,
+            fontSize = 20.sp,
+            color = Light
+        ),
+        colors = TextFieldDefaults.colors(
+            unfocusedContainerColor = DarkBg,
+            focusedContainerColor = InputBg,
+            focusedLabelColor = DarkBg,
+            focusedTextColor = Light,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+        ),
+        keyboardOptions = keyboardOptions
+    )
+}
+
+@Composable
+fun GenericSmallTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    keyboardOptions: KeyboardOptions
+) {
+    TextField(
+        modifier = Modifier
+            .border(width = 3.dp, color = DarkSoft, shape = RoundedCornerShape(15.dp))
+            .width(200.dp),
         value = value,
         label = {
             Text(
@@ -357,7 +429,9 @@ fun MovieCardMedium(
         ),
         modifier = Modifier
             .width(350.dp)
-            .clickable {  }
+            .clickable {
+                onCardClick()
+            }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -419,7 +493,8 @@ fun MovieCardMedium(
 
 @Composable
 fun MovieCardSmall(
-    movie: Movie
+    movie: Movie,
+    onCardClick: () -> Unit
 ){
     Card(
         colors = CardDefaults.cardColors(
@@ -428,7 +503,9 @@ fun MovieCardSmall(
         modifier = Modifier
             .width(300.dp)
             .height(120.dp)
-            .clickable {  }
+            .clickable {
+                onCardClick()
+            }
     ) {
         Row (
             verticalAlignment = Alignment.CenterVertically

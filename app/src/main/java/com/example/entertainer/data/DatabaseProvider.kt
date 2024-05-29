@@ -12,7 +12,9 @@ object DatabaseProvider {
                 context.applicationContext,
                 AppDatabase::class.java,
                 "movies_db"
-            ).build()
+            )
+                .fallbackToDestructiveMigration()
+                .build()
         }
 
         return db!!;
