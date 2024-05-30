@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -294,7 +295,7 @@ fun Navbar(
             contentDescription = "",
             modifier = Modifier
                 .size(40.dp)
-                .clickable{
+                .clickable {
                     onHomeClick()
                 }
 
@@ -347,7 +348,7 @@ fun MovieCardLarge(
         ),
         modifier = Modifier
             .width(350.dp)
-            .clickable {  }
+            .clickable { }
     ) {
         Row {
             Image(
@@ -417,11 +418,8 @@ fun MovieCardLarge(
 
 @Composable
 fun MovieCardMedium(
-    onCardClick: () -> Unit,
-    title: String,
-    genre: MovieCategories,
-    duration: Int,
-    rating: String
+    movie: Movie,
+    onCardClick: () -> Unit
 ){
     Card(
         colors = CardDefaults.cardColors(
@@ -436,14 +434,25 @@ fun MovieCardMedium(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.defaultcover),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(width = 140.dp, height = 200.dp)
-                    .clip(shape = RoundedCornerShape(15.dp)),
-                contentScale = ContentScale.FillBounds
-            )
+            if(movie.image != null) {
+                Image(
+                    bitmap = convertToImageBitmap(movie.image),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(width = 140.dp, height = 200.dp)
+                        .clip(shape = RoundedCornerShape(15.dp)),
+                    contentScale = ContentScale.FillBounds
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.defaultcover),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(width = 140.dp, height = 200.dp)
+                        .clip(shape = RoundedCornerShape(15.dp)),
+                    contentScale = ContentScale.FillBounds
+                )
+            }
 
             Spacer(modifier = Modifier.width(10.dp))
 
@@ -452,7 +461,7 @@ fun MovieCardMedium(
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)
             ) {
                 Text(
-                    text = title,
+                    text = movie.title,
                     style = Typography.headlineSmall,
                     color = Light
                 )
@@ -463,7 +472,7 @@ fun MovieCardMedium(
                     withStyle(style = SpanStyle(fontFamily = KubhmSansFont, fontWeight = FontWeight.Bold)){
                         append("Genre: ")
                     }
-                    append(genre.value)
+                    append(movie.genre.value)
                 }
                 Text(text = genre, color = Light, fontSize = 18.sp)
 
@@ -473,7 +482,7 @@ fun MovieCardMedium(
                     withStyle(style = SpanStyle(fontFamily = KubhmSansFont, fontWeight = FontWeight.Bold)){
                         append("Duration: ")
                     }
-                    append(duration.toString())
+                    append(movie.duration.toString())
                 }
                 Text(text = duration, color = Light, fontSize = 18.sp)
 
@@ -483,7 +492,7 @@ fun MovieCardMedium(
                     withStyle(style = SpanStyle(fontFamily = KubhmSansFont, fontWeight = FontWeight.Bold)){
                         append("Rating: ")
                     }
-                    append(rating)
+                    append(movie.rating)
                 }
                 Text(text = rating, color = Light, fontSize = 18.sp)
             }
@@ -510,14 +519,25 @@ fun MovieCardSmall(
         Row (
             verticalAlignment = Alignment.CenterVertically
         ){
-            Image(
-                painter = painterResource(id = R.drawable.defaultcover),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(width = 80.dp, height = 120.dp)
-                    .clip(shape = RoundedCornerShape(15.dp)),
-                contentScale = ContentScale.FillBounds
-            )
+            if(movie.image != null) {
+                Image(
+                    bitmap = convertToImageBitmap(movie.image),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(width = 80.dp, height = 120.dp)
+                        .clip(shape = RoundedCornerShape(15.dp)),
+                    contentScale = ContentScale.FillBounds
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.defaultcover),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(width = 80.dp, height = 120.dp)
+                        .clip(shape = RoundedCornerShape(15.dp)),
+                    contentScale = ContentScale.FillBounds
+                )
+            }
 
             Spacer(modifier = Modifier.width(10.dp))
 
@@ -576,17 +596,17 @@ fun MovieCardLargePreview(){
     )
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun MovieCardMediumPreview(){
-    MovieCardMedium(
-        onCardClick = {},
-        title = "Fast and Furious 7",
-        genre = MovieCategories.ACTION,
-        duration = 3,
-        rating = "5 stars"
-    )
-}
+//@Preview(showBackground = true, showSystemUi = true)
+//@Composable
+//fun MovieCardMediumPreview(){
+//    MovieCardMedium(
+//        onCardClick = {},
+//        title = "Fast and Furious 7",
+//        genre = MovieCategories.ACTION,
+//        duration = 3,
+//        rating = "5 stars"
+//    )
+//}
 
 //@Preview(showBackground = true, showSystemUi = true)
 //@Composable

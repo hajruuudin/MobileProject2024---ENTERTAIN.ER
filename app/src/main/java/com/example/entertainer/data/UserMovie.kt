@@ -2,6 +2,7 @@ package com.example.entertainer.data
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.entertainer.data.Movie
 import com.example.entertainer.data.User
@@ -25,6 +26,9 @@ import com.example.entertainer.model.MovieCategories
             childColumns = ["movieId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["userId", "movieId"], unique = true)
     ]
 )
 data class UserMovie(

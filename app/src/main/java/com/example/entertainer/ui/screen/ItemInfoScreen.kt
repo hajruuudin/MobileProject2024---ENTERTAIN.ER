@@ -29,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,8 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.entertainer.R
 import com.example.entertainer.data.Movie
+import com.example.entertainer.data.SessionManager
 import com.example.entertainer.ui.Screen
 import com.example.entertainer.ui.components.Navbar
+import com.example.entertainer.ui.components.convertToImageBitmap
 import com.example.entertainer.ui.theme.Buttons
 import com.example.entertainer.ui.theme.Light
 import com.example.entertainer.ui.theme.Typography
@@ -58,19 +61,21 @@ fun ItemInfoScreen(
     viewModel : ItemInfoViewModel,
     movieId : Int
 ) {
+    var userId = SessionManager.getUserId()
     var thisMovie : Movie = viewModel.getMovie(movieId);
+
 
     DisposableEffect(Unit){
         onDispose {
-            thisMovie = viewModel.getMovie(movieId)
+            viewModel.isMovieEntryPresent(userId, thisMovie.id, false, false)
         }
     }
 
     var watched by remember {
-        mutableStateOf(false)
+        mutableStateOf(viewModel.getWatchedStatus(userId, thisMovie.id))
     }
     var watchlist by remember {
-        mutableStateOf(false)
+        mutableStateOf(viewModel.getWatchlistStatus(userId, thisMovie.id))
     }
 
     Scaffold(
@@ -121,11 +126,25 @@ fun ItemInfoScreen(
             ){
 
                 Spacer(modifier = Modifier.height(30.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.defaultcover),
-                    contentDescription = null,
-                    modifier = Modifier.clip(RoundedCornerShape(20.dp))
-                )
+
+                if(thisMovie.image != null){
+                    Image(
+                        bitmap = convertToImageBitmap(thisMovie.image!!),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50.dp))
+                            .size(400.dp)
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.defaultcover),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .size(300.dp)
+                    )
+                }
+
 
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -181,7 +200,14 @@ fun ItemInfoScreen(
 
                     Checkbox(
                         checked = watched,
-                        onCheckedChange = {watched = !watched},
+                        onCheckedChange = {
+                            if (viewModel.getWatchedStatus(userId, thisMovie.id) == false) {
+                                viewModel.updateWatchedStatus(userId, thisMovie.id, true)
+                                watched = !watched
+                            } else {
+                                viewModel.updateWatchedStatus(userId, thisMovie.id, false)
+                                watched = !watched
+                            }},
                         colors = CheckboxDefaults.colors(
                             checkedColor = Buttons
                         )
@@ -199,7 +225,13 @@ fun ItemInfoScreen(
 
                     Checkbox(
                         checked = watchlist,
-                        onCheckedChange = {watchlist = !watchlist},
+                        onCheckedChange = {if (viewModel.getWatchlistStatus(userId, thisMovie.id) == false) {
+                            viewModel.updateWatchlistStatus(userId, thisMovie.id, true)
+                            watchlist = !watchlist
+                        } else {
+                            viewModel.updateWatchlistStatus(userId, thisMovie.id, false)
+                            watchlist = !watchlist
+                        }},
                         colors = CheckboxDefaults.colors(
                             checkedColor = Buttons
                         )

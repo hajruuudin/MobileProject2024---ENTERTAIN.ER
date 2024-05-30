@@ -75,19 +75,19 @@ fun WatchlistScreen(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                LazyColumn(){
-                    items(10){
-                        MovieCardMedium(
-                            onCardClick = {},
-                            title = "Fast & Furious",
-                            genre = MovieCategories.ACTION,
-                            duration = 3,
-                            rating = "4 stars"
-                        )
-
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                }
+//                LazyColumn(){
+//                    items(10){
+//                        MovieCardMedium(
+//                            onCardClick = {},
+//                            title = "Fast & Furious",
+//                            genre = MovieCategories.ACTION,
+//                            duration = 3,
+//                            rating = "4 stars"
+//                        )
+//
+//                        Spacer(modifier = Modifier.height(15.dp))
+//                    }
+//                }
             }
         }
     }

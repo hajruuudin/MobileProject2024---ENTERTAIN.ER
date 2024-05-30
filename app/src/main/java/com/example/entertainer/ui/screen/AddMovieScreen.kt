@@ -366,7 +366,10 @@ fun MovieImage(
         Image(
             bitmap = bitmap.asImageBitmap(),
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(250.dp)
+                .clip(RoundedCornerShape(20.dp))
         )
     } else {
         Image(
@@ -375,7 +378,8 @@ fun MovieImage(
             modifier = Modifier
                 .size(250.dp)
                 .clip(RoundedCornerShape(20.dp))
-                .clickable { launcher.launch("image/*") }
+                .clickable { launcher.launch("image/*")
+                }
         )
     }
 }
