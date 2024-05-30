@@ -65,18 +65,26 @@ fun ItemInfoScreen(
     var thisMovie : Movie = viewModel.getMovie(movieId);
 
 
+    // Initialize watched and watchlist variables with values from the ViewModel
+    val initialWatched = remember { mutableStateOf(viewModel.getWatchedStatus(userId, thisMovie.id)) }
+    val initialWatchlist = remember { mutableStateOf(viewModel.getWatchlistStatus(userId, thisMovie.id)) }
+
+    // Update watched and watchlist variables when the movie is updated
+    LaunchedEffect(thisMovie) {
+        viewModel.isMovieEntryPresent(userId, thisMovie.id, false, false)
+        initialWatched.value = viewModel.getWatchedStatus(userId, thisMovie.id)
+        initialWatchlist.value = viewModel.getWatchlistStatus(userId, thisMovie.id)
+    }
+
     DisposableEffect(Unit){
         onDispose {
-            viewModel.isMovieEntryPresent(userId, thisMovie.id, false, false)
+            initialWatched.value = false
+            initialWatchlist.value = false
         }
     }
 
-    var watched by remember {
-        mutableStateOf(viewModel.getWatchedStatus(userId, thisMovie.id))
-    }
-    var watchlist by remember {
-        mutableStateOf(viewModel.getWatchlistStatus(userId, thisMovie.id))
-    }
+    var watched by initialWatched
+    var watchlist by initialWatchlist
 
     Scaffold(
         topBar = {
@@ -201,12 +209,11 @@ fun ItemInfoScreen(
                     Checkbox(
                         checked = watched,
                         onCheckedChange = {
-                            if (viewModel.getWatchedStatus(userId, thisMovie.id) == false) {
-                                viewModel.updateWatchedStatus(userId, thisMovie.id, true)
-                                watched = !watched
-                            } else {
-                                viewModel.updateWatchedStatus(userId, thisMovie.id, false)
-                                watched = !watched
+                            val newWatchedStatus = !watched
+
+                            if (viewModel.getWatchedStatus(userId, thisMovie.id) != newWatchedStatus) {
+                                viewModel.updateWatchedStatus(userId, thisMovie.id, newWatchedStatus)
+                                watched = newWatchedStatus
                             }},
                         colors = CheckboxDefaults.colors(
                             checkedColor = Buttons
@@ -225,12 +232,12 @@ fun ItemInfoScreen(
 
                     Checkbox(
                         checked = watchlist,
-                        onCheckedChange = {if (viewModel.getWatchlistStatus(userId, thisMovie.id) == false) {
-                            viewModel.updateWatchlistStatus(userId, thisMovie.id, true)
-                            watchlist = !watchlist
-                        } else {
-                            viewModel.updateWatchlistStatus(userId, thisMovie.id, false)
-                            watchlist = !watchlist
+                        onCheckedChange = {
+                        val newWatchlistStatus = !watchlist
+
+                        if (viewModel.getWatchlistStatus(userId, thisMovie.id) != newWatchlistStatus) {
+                            viewModel.updateWatchedStatus(userId, thisMovie.id, newWatchlistStatus)
+                            watched = newWatchlistStatus
                         }},
                         colors = CheckboxDefaults.colors(
                             checkedColor = Buttons

@@ -47,6 +47,9 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeScreenViewModel = viewModel()
 ){
+    LaunchedEffect(Unit){
+        viewModel.updateMovies()
+    }
     DisposableEffect(Unit){
         onDispose {
             viewModel.updateMovies()
