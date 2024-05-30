@@ -19,12 +19,6 @@ class HomeScreenViewModel(
 ) : ViewModel() {
     val movies = mutableStateListOf<Movie>()
 
-    init{
-        viewModelScope.launch {
-            movies.addAll(movieDao.getAllMovies())
-        }
-    }
-
     fun updateMovies() {
         // Update movies list when the home screen is entered or re-entered
         viewModelScope.launch {
