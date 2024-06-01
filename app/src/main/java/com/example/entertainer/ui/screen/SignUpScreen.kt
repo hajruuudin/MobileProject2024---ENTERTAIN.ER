@@ -1,5 +1,6 @@
 package com.example.entertainer.ui.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,10 +45,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.entertainer.R
+import com.example.entertainer.data.User
 import com.example.entertainer.model.MovieCategories
 import com.example.entertainer.ui.Screen
 import com.example.entertainer.ui.components.EmailTextField
 import com.example.entertainer.ui.components.GenericTextField
+import com.example.entertainer.ui.components.LogInComponent
 import com.example.entertainer.ui.components.LogoAndHeading
 import com.example.entertainer.ui.components.PasswordTextField
 import com.example.entertainer.ui.theme.Buttons
@@ -56,23 +60,37 @@ import com.example.entertainer.ui.theme.InputBg
 import com.example.entertainer.ui.theme.KubhmSansFont
 import com.example.entertainer.ui.theme.Light
 import com.example.entertainer.ui.theme.Typography
+import com.example.entertainer.viewmodel.SignUpViewModel
 
+
+/* Log In Screen */
 @Composable
 fun SignUpScreen(
-    navController: NavController
+    navController: NavController,
+    signUpViewModel: SignUpViewModel
 ){
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
     var dropDownSelect by remember {
         mutableStateOf("")
+    }
+    var genre = when (dropDownSelect){
+        "Action" -> MovieCategories.ACTION
+        "Horror" -> MovieCategories.HORROR
+        "Romance" -> MovieCategories.ROMANCE
+        "Comedy" -> MovieCategories.COMEDY
+        else -> MovieCategories.SCIFI
     }
 
     var dropDownExpand by remember {
         mutableStateOf(false)
     }
+
+    val context = LocalContext.current
 
 
     Box(
@@ -214,7 +232,7 @@ fun SignUpScreen(
                     expanded = dropDownExpand,
                     modifier = Modifier.width(280.dp),
                     onDismissRequest = { dropDownExpand = false}) {
-                    -> MovieCategories.values().map {
+                    -> MovieCategories.entries.map {
                     DropdownMenuItem(
                         colors = MenuDefaults.itemColors(
                             textColor = Light
@@ -231,7 +249,21 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(30.dp))
 
             Button(
-                onClick = {/*log in to do*/},
+                onClick = {
+                    signUpViewModel.registerUser(
+                        User(
+                            username= username,
+                            name = name,
+                            surname = surname,
+                            email = email,
+                            password = password,
+                            favourite = genre,
+                            isAdmin = false
+                        )
+                    )
+                    Toast.makeText(context, "User Added!", Toast.LENGTH_LONG).show()
+                    navController.popBackStack()
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Buttons
                 ),
@@ -254,31 +286,3 @@ fun SignUpScreen(
         }
     }
 }
-
-@Composable
-private fun LogInComponent(
-    navController: NavController
-) {
-    Text(
-        text = "Have an account?",
-
-        style = Typography.bodySmall,
-        color = Light
-    )
-
-    TextButton(onClick = {navController.navigate(Screen.LogInScreen.route)}) {
-        Text(
-            text = "Log In!",
-            fontSize = 20.sp,
-            fontFamily = KubhmSansFont,
-            fontWeight = FontWeight.Bold,
-            color = Light
-        )
-    }
-}
-
-//@Preview(showBackground = true)
-//@Composable
-//fun SignUpPreview(){
-//    SignUpScreen()
-//}

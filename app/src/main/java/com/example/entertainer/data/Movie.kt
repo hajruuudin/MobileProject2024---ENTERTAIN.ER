@@ -12,7 +12,7 @@ data class Movie(
     val title: String,
     val genre: MovieCategories,
     val director: String,
-    val duration: Int,
+    val duration: Double,
     val actors: String,
     val rating: String,
     val image: ByteArray?

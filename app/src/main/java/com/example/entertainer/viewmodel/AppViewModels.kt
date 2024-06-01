@@ -8,6 +8,13 @@ import com.example.entertainer.data.MovieDao
 import com.example.entertainer.data.UserDao
 import com.example.entertainer.data.UserMovieDao
 
+/**
+ * Factory for creating [HomeScreenViewModel] instances. Same for all other factories
+ *
+ * @property movieDao The DAO for movies.
+ * @property userMovieDao The DAO for user-movie relations.
+ * @property userDao The DAO for users.
+ */
 class HomeScreenModelFactory(
     private val movieDao: MovieDao,
     private val userMovieDao: UserMovieDao,
@@ -86,6 +93,30 @@ class AddMovieScreenModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(AddMovieViewModel::class.java)){
             return AddMovieViewModel(movieDao, userMovieDao, userDao) as T
+        }
+
+        throw IllegalArgumentException("ERROR")
+    }
+}
+
+class SignUpViewModelFactory(
+    private val userDao: UserDao
+) : ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if(modelClass.isAssignableFrom(SignUpViewModel::class.java)){
+            return SignUpViewModel(userDao) as T
+        }
+
+        throw IllegalArgumentException("ERROR")
+    }
+}
+
+class LogInViewModelFactory(
+    private val userDao: UserDao
+) : ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if(modelClass.isAssignableFrom(LogInViewModel::class.java)){
+            return LogInViewModel(userDao) as T
         }
 
         throw IllegalArgumentException("ERROR")

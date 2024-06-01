@@ -81,17 +81,19 @@ import com.example.entertainer.ui.theme.Typography
 import com.example.entertainer.ui.theme.UIBackground
 import com.example.entertainer.viewmodel.AddMovieViewModel
 
+/* Screen for adding a movie: Available only to admins */
 @Composable
 fun AddMovieScreen(
     navController: NavController,
     addMovieViewModel: AddMovieViewModel
 ){
-
+    /* Used for dropdowns and the image */
     var dropDownSelect by remember { mutableStateOf("") }
     var dropDownExpand by remember { mutableStateOf(false) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
 
+    /* Data to create the movie */
     var title by remember{mutableStateOf("")}
     var genre = when (dropDownSelect){
         "Action" -> MovieCategories.ACTION
@@ -194,7 +196,7 @@ fun AddMovieScreen(
                         value = dropDownSelect,
                         label = {
                             Text(
-                                text = "Favourite Category",
+                                text = "Category / Genre",
                                 color = Light,
                                 fontFamily = KubhmSansFont,
                                 fontWeight = FontWeight.Bold,
@@ -298,7 +300,7 @@ fun AddMovieScreen(
                 GenericTextField(
                     value = rating,
                     onValueChange = {rating = it},
-                    label = "Actors",
+                    label = "Rating",
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Done
                     )
@@ -315,15 +317,17 @@ fun AddMovieScreen(
                                       actors = actors,
                                       director = director,
                                       rating = rating,
-                                      duration = duration.toInt(),
+                                      duration = duration.toDouble(),
                                       image = bitmap?.let { it1 -> convertToByteArray(it1) }
                                   )
                               )
                         Toast
                             .makeText(context, "Movie added!", Toast.LENGTH_LONG).show()
+                        navController.popBackStack()
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Buttons
+                        containerColor = Buttons,
+                        contentColor = Light
                     ),
                     shape = RoundedCornerShape(15.dp),
                     modifier = Modifier.size(width = 200.dp, height = 50.dp)
@@ -333,11 +337,14 @@ fun AddMovieScreen(
                         style = Typography.labelMedium
                     )
                 }
+
+                Spacer(modifier = Modifier.height(80.dp))
             }
         }
     }
 }
 
+/* Movie image composable */
 @Composable
 fun MovieImage(
     imageUri: Uri?,
@@ -350,6 +357,7 @@ fun MovieImage(
         onImageUriChanged(uri)
     }
 
+    /* Opening the gallery for image submission */
     LaunchedEffect(imageUri) {
         imageUri?.let { uri ->
             val newBitmap = if (Build.VERSION.SDK_INT < 28) {
@@ -362,6 +370,7 @@ fun MovieImage(
         }
     }
 
+    /* Save the image to the bitmap */
     if (bitmap != null) {
         Image(
             bitmap = bitmap.asImageBitmap(),

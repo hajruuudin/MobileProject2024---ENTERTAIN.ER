@@ -2,11 +2,10 @@ package com.example.entertainer.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.entertainer.data.UserMovieDao
 
 @Database(
     entities = [User::class, Movie::class, UserMovie::class],
-    version = 9
+    version = 10
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao() : UserDao

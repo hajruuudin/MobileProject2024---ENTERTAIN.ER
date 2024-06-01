@@ -8,6 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 object DatabaseProvider {
     private var db: AppDatabase? = null
 
+    /* Creating the database instance */
     fun getDatabase(context: Context) : AppDatabase {
         if (db == null){
             db = Room.databaseBuilder(
@@ -24,10 +25,10 @@ object DatabaseProvider {
     }
 }
 
+/* Implementing foreign keys: NOT IN USE NOW! */
 private class DatabaseProviderCallback : RoomDatabase.Callback() {
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
-        // Enable foreign key constraints
         db.execSQL("PRAGMA foreign_keys=ON;")
     }
 }

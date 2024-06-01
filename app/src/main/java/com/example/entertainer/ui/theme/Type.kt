@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.entertainer.R
 
-// Set of Material typography styles to start with
+/* Set of Material typography styles to start with. Using font KumbhSansFont*/
 val KubhmSansFont = FontFamily(
     Font(resId = R.font.kubhm_black, weight = FontWeight.ExtraBold),
     Font(resId = R.font.kubhm_bold, weight = FontWeight.Bold),

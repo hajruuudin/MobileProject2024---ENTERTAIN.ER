@@ -11,16 +11,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.example.entertainer.data.SessionManager
 import com.example.entertainer.model.MovieCategories
 import com.example.entertainer.ui.Screen
 import com.example.entertainer.ui.components.MovieCardMedium
@@ -30,12 +35,24 @@ import com.example.entertainer.ui.theme.Typography
 import com.example.entertainer.ui.theme.UIBackground
 import com.example.entertainer.viewmodel.WatchlistViewModel
 
+/* Watchlist Screen */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun WatchlistScreen(
     navController: NavController,
     viewModel: WatchlistViewModel
 ){
+    var userId = SessionManager.getUserId()
+
+    LaunchedEffect(Unit){
+        viewModel.updateWatchlist(userId)
+    }
+    DisposableEffect(Unit){
+        onDispose {
+            viewModel.updateWatchlist(userId)
+        }
+    }
+
     Scaffold(
         bottomBar = {
             Navbar(
@@ -75,26 +92,32 @@ fun WatchlistScreen(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-//                LazyColumn(){
-//                    items(10){
-//                        MovieCardMedium(
-//                            onCardClick = {},
-//                            title = "Fast & Furious",
-//                            genre = MovieCategories.ACTION,
-//                            duration = 3,
-//                            rating = "4 stars"
-//                        )
-//
-//                        Spacer(modifier = Modifier.height(15.dp))
-//                    }
-//                }
+                if(viewModel.watchlist.isEmpty()){
+                    Text(
+                        text = "No movies!",
+                        style = Typography.headlineLarge,
+                        color = Light
+                    )
+                    Text(
+                        text = "Your watchlist is empty",
+                        style = Typography.labelMedium,
+                        color = Color.LightGray
+                    )
+                } else {
+                    LazyColumn(){
+                        items(viewModel.watchlist){movie ->
+                            MovieCardMedium(
+                                movie = movie,
+                                onCardClick = {
+                                    navController.navigate(Screen.ItemInfoScreen.route + "/" + movie.id)
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(15.dp))
+                        }
+                    }
+                }
+
             }
         }
     }
 }
-
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun WatchlistPreview(){
-//    WatchlistScreen()
-//}

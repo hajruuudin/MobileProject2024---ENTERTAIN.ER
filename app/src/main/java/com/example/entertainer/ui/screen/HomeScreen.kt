@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.entertainer.data.DatabaseProvider
+import com.example.entertainer.data.Movie
+import com.example.entertainer.data.SessionManager
 import com.example.entertainer.model.MovieCategories
 import com.example.entertainer.ui.Screen
 import com.example.entertainer.ui.components.MovieCardLarge
@@ -41,28 +44,33 @@ import com.example.entertainer.ui.theme.Typography
 import com.example.entertainer.ui.theme.UIBackground
 import com.example.entertainer.viewmodel.HomeScreenViewModel
 
+/* Home screen composable */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     navController: NavController,
     viewModel: HomeScreenViewModel = viewModel()
 ){
+    /* Getting the current logged in user from the Session Manager */
+    var userId = SessionManager.getUserId()
+
     LaunchedEffect(Unit){
-        viewModel.updateMovies()
+        viewModel.getLoggedUser(userId)
     }
+
     DisposableEffect(Unit){
         onDispose {
-            viewModel.updateMovies()
+            viewModel.getLoggedUser(userId)
         }
     }
 
     Scaffold(
         bottomBar = {
             Navbar(
-            onHomeClick = {},
-            onMoviesClick = {navController.navigate(Screen.MoviesScreen.route)},
-            onWatchlistClick = {navController.navigate(Screen.WatchlistScreen.route)},
-            onProfileClick = {navController.navigate(Screen.ProfileScreen.route)}
+                onHomeClick = {},
+                onMoviesClick = {navController.navigate(Screen.MoviesScreen.route)},
+                onWatchlistClick = {navController.navigate(Screen.WatchlistScreen.route)},
+                onProfileClick = {navController.navigate(Screen.ProfileScreen.route)}
             )
         }
     ) {
@@ -94,78 +102,99 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
+                /* Movie Recommendation Section */
                 Text(
                     text = "Todays movie recommendation:",
-                    style = Typography.bodyMedium,
+                    style = Typography.labelMedium,
                     color = Light
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                MovieCardLarge(
-                    onCardClick = { /*TODO*/ },
-                    title = "Fast & Furious",
-                    genre = MovieCategories.ACTION,
-                    duration = 2,
-                    director = "James Wan",
-                    rating = "4 stars"
-                )
+                if (viewModel.movies.isEmpty()){
+                    Text(
+                        text = "No movies!",
+                        style = Typography.headlineLarge,
+                        color = Light
+                    )
+                    Text(
+                        text = "We can't find anything",
+                        style = Typography.labelMedium,
+                        color = Color.LightGray
+                    )
+                } else {
+                    MovieCardLarge(
+                        movie = viewModel.movies[0],
+                        onCardClick = {
+                            navController.navigate(Screen.ItemInfoScreen.route + "/" + viewModel.movies[0].id)
+                        }
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+                /* Watchlist Section */
                 Text(
                     text = "Your watchlist:",
-                    style = Typography.bodyMedium,
+                    style = Typography.labelMedium,
                     color = Light
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                LazyRow(){
-                    items(viewModel.movies) {movie ->
-                        MovieCardSmall(
-                            movie = movie,
-                            onCardClick = {
-                                navController.navigate(Screen.ItemInfoScreen.route + "/" + movie.id)
-                            }
-                        )
-                        Spacer(modifier = Modifier.width(15.dp))
+                if(viewModel.watchlist.isEmpty()){
+                    Text(
+                        text = "Your watchlist is empty!",
+                        style = Typography.bodySmall,
+                        color = Light
+                    )
+                } else {
+                    LazyRow(){
+                        items(viewModel.watchlist) {movie ->
+                            MovieCardSmall(
+                                movie = movie,
+                                onCardClick = {
+                                    navController.navigate(Screen.ItemInfoScreen.route + "/" + movie.id)
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(15.dp))
+                        }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+                /* Categorized Movie Section */
                 Text(
                     text = "Based on your favourite category:",
-                    style = Typography.bodyMedium,
+                    style = Typography.labelMedium,
                     color = Light
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                LazyRow(){
-                    items(viewModel.movies) {movie ->
-                        MovieCardSmall(
-                            movie = movie,
-                            onCardClick = {
-                                navController.navigate(Screen.ItemInfoScreen.route + "/" + movie.id)
-                            }
-                        )
+                if(viewModel.movies.isEmpty()){
+                    Text(
+                        text = "No movies for your favourite category!",
+                        style = Typography.bodySmall,
+                        color = Light
+                    )
+                } else {
+                    LazyRow() {
+                        items(viewModel.movies) { movie ->
+                            MovieCardSmall(
+                                movie = movie,
+                                onCardClick = {
+                                    navController.navigate(Screen.ItemInfoScreen.route + "/" + movie.id)
+                                }
+                            )
 
-                        Spacer(modifier = Modifier.width(15.dp))
+                            Spacer(modifier = Modifier.width(15.dp))
+                        }
                     }
                 }
-
                 Spacer(modifier = Modifier.height(150.dp))
-
             }
-
         }
     }
 }
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun HomeScreenPreview(){
-//    HomeScreen();
-//}

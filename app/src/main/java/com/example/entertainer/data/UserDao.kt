@@ -20,7 +20,12 @@ interface UserDao {
     @Update
     suspend fun update(user: User)
 
-    /* Retrieve the specified user. Used to open the profile page */
+    /**
+     * Retrieves the specified user by their ID. Used to open the profile page.
+     *
+     * @param id The ID of the user to be retrieved.
+     * @return The user with the specified ID.
+     */
     @Query("SELECT * FROM User WHERE id = :id")
-    fun getUser(id: Int) : Flow<User>
+    suspend fun getUser(id: Int) : User
 }

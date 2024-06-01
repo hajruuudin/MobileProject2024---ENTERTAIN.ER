@@ -12,7 +12,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,27 +21,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.entertainer.R
 import com.example.entertainer.ui.Screen
 import com.example.entertainer.ui.components.EmailTextField
 import com.example.entertainer.ui.components.LogoAndHeading
 import com.example.entertainer.ui.components.PasswordTextField
+import com.example.entertainer.ui.components.SignUpComponent
 import com.example.entertainer.ui.theme.Buttons
-import com.example.entertainer.ui.theme.KubhmSansFont
 import com.example.entertainer.ui.theme.Light
 import com.example.entertainer.ui.theme.Typography
+import com.example.entertainer.viewmodel.LogInViewModel
 
-
+/* Log In Screen  */
 @Composable
 fun LogInScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: LogInViewModel
 ){
+    /* Using the variables to change the state of the input fields */
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -60,12 +60,10 @@ fun LogInScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Showing the logo:
             LogoAndHeading()
 
             Spacer(modifier = Modifier.height(50.dp))
 
-            // Main part: Log In Form
             Text(
                 text = "Log In",
                 style = Typography.headlineLarge,
@@ -99,7 +97,9 @@ fun LogInScreen(
             Spacer(modifier = Modifier.height(40.dp))
 
             Button(
-                onClick = {/*log in to do*/},
+                onClick = {
+                          navController.navigate(Screen.HomeScreen.route)
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Buttons
                 ),
@@ -119,38 +119,3 @@ fun LogInScreen(
         }
     }
 }
-
-
-
-@Composable
-private fun SignUpComponent(
-    navController: NavController
-) {
-    Text(
-        text = "Don't have an account?",
-        style = Typography.bodySmall,
-        color = Light
-    )
-
-    TextButton(onClick = {navController.navigate(Screen.SignUpScreen.route)}) {
-        Text(
-            text = "Sign Up!",
-            fontSize = 20.sp,
-            fontFamily = KubhmSansFont,
-            fontWeight = FontWeight.Bold,
-            color = Light
-        )
-    }
-}
-
-
-
-
-
-
-//// Preview for the entire screen
-//@Preview(showBackground = true)
-//@Composable
-//fun LogInScreenPreview(){
-//    LogInScreen()
-//}
