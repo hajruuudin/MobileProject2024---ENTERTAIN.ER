@@ -25,6 +25,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,9 +37,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.entertainer.R
+import com.example.entertainer.data.SessionManager
+import com.example.entertainer.data.User
 import com.example.entertainer.ui.Screen
 import com.example.entertainer.ui.components.ImmutableTextField
 import com.example.entertainer.ui.components.Navbar
+import com.example.entertainer.ui.components.calculateWatchedHours
 import com.example.entertainer.ui.theme.Buttons
 import com.example.entertainer.ui.theme.Light
 import com.example.entertainer.ui.theme.Typography
@@ -49,6 +54,21 @@ fun ProfileScreen(
     navController: NavController,
     viewModel: ProfileViewModel
 ) {
+    var userId = SessionManager.getUserId()
+    viewModel.userID = userId
+
+    LaunchedEffect(Unit){
+        viewModel.getUserData()
+        viewModel.updateUserWatchedList()
+    }
+
+    DisposableEffect(Unit){
+        onDispose {
+            viewModel.getUserData()
+            viewModel.updateUserWatchedList()
+        }
+    }
+
     Scaffold(
         bottomBar = {
             Navbar(
@@ -96,7 +116,7 @@ fun ProfileScreen(
                     Text(text = "Name", style = Typography.labelMedium, color = Light, modifier = Modifier.padding(horizontal = 10.dp))
                     Spacer(modifier = Modifier.height(5.dp))
                     ImmutableTextField(
-                        value = "Hajrudin Imamovic",
+                        value = viewModel.user.name + " " + viewModel.user.surname,
                         onValueChange = {},
                         keyboardOptions = KeyboardOptions.Default
                     )
@@ -106,7 +126,7 @@ fun ProfileScreen(
                     Text(text = "Username", style = Typography.labelMedium, color = Light, modifier = Modifier.padding(horizontal = 10.dp))
                     Spacer(modifier = Modifier.height(5.dp))
                     ImmutableTextField(
-                        value = "hajruuudin",
+                        value = viewModel.user.username,
                         onValueChange = {},
                         keyboardOptions = KeyboardOptions.Default
                     )
@@ -116,7 +136,7 @@ fun ProfileScreen(
                     Text(text = "Email", style = Typography.labelMedium, color = Light, modifier = Modifier.padding(horizontal = 10.dp))
                     Spacer(modifier = Modifier.height(5.dp))
                     ImmutableTextField(
-                        value = "hajruuudin@gmail.com",
+                        value = viewModel.user.email,
                         onValueChange = {},
                         keyboardOptions = KeyboardOptions.Default
                     )
@@ -126,7 +146,7 @@ fun ProfileScreen(
                     Text(text = "Favourite Category", style = Typography.labelMedium, color = Light, modifier = Modifier.padding(horizontal = 10.dp))
                     Spacer(modifier = Modifier.height(5.dp))
                     ImmutableTextField(
-                        value = "Action",
+                        value = viewModel.user.favourite.value,
                         onValueChange = {},
                         keyboardOptions = KeyboardOptions.Default
                     )
@@ -157,7 +177,9 @@ fun ProfileScreen(
                             ),
                             modifier = Modifier.size(width = 80.dp, height = 40.dp)
                         ){
-                            Text(text = "11", style = Typography.labelMedium, color = Light)
+                            Text(text = viewModel.userWatched.size.toString(),
+                                style = Typography.labelMedium,
+                                color = Light)
                         }
                     }
 
@@ -183,7 +205,9 @@ fun ProfileScreen(
                             ),
                             modifier = Modifier.size(width = 80.dp, height = 40.dp)
                         ){
-                            Text(text = "11", style = Typography.labelMedium, color = Light)
+                            Text(text = calculateWatchedHours(viewModel.userWatched).toString(),
+                                style = Typography.labelMedium,
+                                color = Light)
                         }
                     }
                 }

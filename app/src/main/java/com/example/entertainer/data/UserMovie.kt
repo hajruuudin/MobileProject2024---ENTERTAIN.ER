@@ -9,8 +9,7 @@ import com.example.entertainer.data.User
 import com.example.entertainer.model.MovieCategories
 
 /* Entity for USER MOVIES: This on is a middle table used to determine a users watchlist, statistics and watched movies */
-/* Should not objects of this type as it is only used as an intermediate table! */
-/* Foreign keys: Movie ID and User ID */
+/* Should not return objects of this type as it is only used as an intermediate table! */
 @Entity(tableName = "UserMovie")
 data class UserMovie(
     @PrimaryKey(autoGenerate = true)

@@ -19,10 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -38,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.entertainer.R
@@ -52,7 +49,6 @@ import com.example.entertainer.ui.theme.Light
 import com.example.entertainer.ui.theme.Typography
 import com.example.entertainer.ui.theme.UIBackground
 import com.example.entertainer.viewmodel.ItemInfoViewModel
-import java.lang.StringBuilder
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -61,21 +57,22 @@ fun ItemInfoScreen(
     viewModel : ItemInfoViewModel,
     movieId : Int
 ) {
-    var userId = SessionManager.getUserId()
-    var thisMovie : Movie = viewModel.getMovie(movieId);
+    /* Initialize the UserID and the movie that is retrieved */
+    val userId = SessionManager.getUserId()
+    val thisMovie : Movie = viewModel.getMovie(movieId)
 
-
-    // Initialize watched and watchlist variables with values from the ViewModel
+    /* Initialize watched and watchlist variables with values from the ViewModel */
     val initialWatched = remember { mutableStateOf(viewModel.getWatchedStatus(userId, thisMovie.id)) }
     val initialWatchlist = remember { mutableStateOf(viewModel.getWatchlistStatus(userId, thisMovie.id)) }
 
-    // Update watched and watchlist variables when the movie is updated
+    /* When the movie is changed, update the Item Info Screen */
     LaunchedEffect(thisMovie) {
         viewModel.isMovieEntryPresent(userId, thisMovie.id, false, false)
         initialWatched.value = viewModel.getWatchedStatus(userId, thisMovie.id)
         initialWatchlist.value = viewModel.getWatchlistStatus(userId, thisMovie.id)
     }
 
+    /* When navigating from the screen, set the variables to false */
     DisposableEffect(Unit){
         onDispose {
             initialWatched.value = false
@@ -83,6 +80,7 @@ fun ItemInfoScreen(
         }
     }
 
+    /* Used as UI states for the checkboxes */
     var watched by initialWatched
     var watchlist by initialWatchlist
 
@@ -153,44 +151,65 @@ fun ItemInfoScreen(
                     )
                 }
 
-
                 Spacer(modifier = Modifier.height(20.dp))
 
+                Text(text = "Title", style = Typography.labelLarge)
                 Text(
                     text = thisMovie.title,
-                    style = Typography.headlineMedium,
+                    style = Typography.bodyMedium,
                     color = Light
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+                Text(text = "Genre", style = Typography.labelLarge)
                 Text(
                     text = thisMovie.genre.value,
                     style = Typography.bodyMedium,
                     color = Light
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(text = "Duration", style = Typography.labelLarge)
                 Text(
                     text = thisMovie.duration.toString(),
                     style = Typography.bodyMedium,
                     color = Light
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(text = "Director", style = Typography.labelLarge)
                 Text(
                     text = thisMovie.director,
                     style = Typography.bodyMedium,
                     color = Light
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(text = "Actors", style = Typography.labelLarge)
                 Text(
                     text = thisMovie.actors,
                     style = Typography.bodyMedium,
                     color = Light
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(text = "Description", style = Typography.labelLarge)
                 Text(
-                    text = "Description",
+                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
                     style = Typography.bodyMedium,
                     color = Light
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(text = "Rating", style = Typography.labelLarge)
                 Text(
-                    text = "Rating",
+                    text = thisMovie.rating,
                     style = Typography.bodyMedium,
                     color = Light
                 )
@@ -233,30 +252,19 @@ fun ItemInfoScreen(
                     Checkbox(
                         checked = watchlist,
                         onCheckedChange = {
-                        val newWatchlistStatus = !watchlist
+                            val newWatchlistStatus = !watchlist
 
-                        if (viewModel.getWatchlistStatus(userId, thisMovie.id) != newWatchlistStatus) {
-                            viewModel.updateWatchedStatus(userId, thisMovie.id, newWatchlistStatus)
-                            watched = newWatchlistStatus
-                        }},
+                            if (viewModel.getWatchlistStatus(userId, thisMovie.id) != newWatchlistStatus) {
+                                viewModel.updateWatchlistStatus(userId, thisMovie.id, newWatchlistStatus)
+                                watchlist = newWatchlistStatus
+                            }},
                         colors = CheckboxDefaults.colors(
                             checkedColor = Buttons
                         )
                     )
                 }
-
                 Spacer(modifier = Modifier.height(30.dp))
             }
-
         }
     }
-
-
 }
-
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun ItemInfoPreview()
-//{
-//    ItemInfoScreen()
-//}

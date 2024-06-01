@@ -18,10 +18,15 @@ import com.example.entertainer.ui.screen.WatchlistScreen
 import com.example.entertainer.viewmodel.AddMovieViewModel
 import com.example.entertainer.viewmodel.HomeScreenViewModel
 import com.example.entertainer.viewmodel.ItemInfoViewModel
+import com.example.entertainer.viewmodel.LogInViewModel
 import com.example.entertainer.viewmodel.MoviesViewModel
 import com.example.entertainer.viewmodel.ProfileViewModel
+import com.example.entertainer.viewmodel.SignUpViewModel
 import com.example.entertainer.viewmodel.WatchlistViewModel
 
+/**
+ * Represents various screens in the application and their corresponding routes.
+ */
 sealed class Screen(val route: String){
     /* Log in and Sign Up Routes */
     object LogInScreen: Screen("login")
@@ -38,6 +43,19 @@ sealed class Screen(val route: String){
     object ItemInfoScreen: Screen("iteminfo")
 }
 
+/**
+ * Navigation graph of the application.
+ *
+ * @param navController The navigation controller.
+ * @param homeViewModel The view model for the home screen.
+ * @param moviesViewModel The view model for the movies screen.
+ * @param watchlistViewModel The view model for the watchlist screen.
+ * @param profileViewModel The view model for the profile screen.
+ * @param itemInfoViewModel The view model for the item info screen.
+ * @param addMovieViewModel The view model for the add movie screen.
+ * @param signUpViewModel The view model for the sign-up screen.
+ * @param logInViewModel The view model for the log-in screen.
+ */
 @Composable
 fun NavGraph (
     navController: NavHostController,
@@ -46,19 +64,22 @@ fun NavGraph (
     watchlistViewModel: WatchlistViewModel,
     profileViewModel: ProfileViewModel,
     itemInfoViewModel: ItemInfoViewModel,
-    addMovieViewModel: AddMovieViewModel
+    addMovieViewModel: AddMovieViewModel,
+    signUpViewModel: SignUpViewModel,
+    logInViewModel: LogInViewModel
 ){
     NavHost(
         navController = navController,
-        startDestination = Screen.HomeScreen.route
+        startDestination = Screen.LogInScreen.route
     ){
         /* Log in and Sign Up Routes */
         composable(route = Screen.LogInScreen.route){
-            LogInScreen(navController)
+            LogInScreen(navController, logInViewModel)
         }
         composable(route = Screen.SignUpScreen.route){
-            SignUpScreen(navController)
+            SignUpScreen(navController, signUpViewModel)
         }
+
         /* Navbar Routes */
         composable(route = Screen.HomeScreen.route){
             HomeScreen(navController, homeViewModel)
@@ -72,6 +93,7 @@ fun NavGraph (
         composable(route = Screen.ProfileScreen.route){
             ProfileScreen(navController, profileViewModel)
         }
+
         /* Item info and Admin add Movies Screen */
         composable(route = Screen.AddMoviesScreen.route){
             AddMovieScreen(navController, addMovieViewModel)

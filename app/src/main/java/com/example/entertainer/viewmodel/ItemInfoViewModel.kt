@@ -14,14 +14,9 @@ class ItemInfoViewModel(
     val userMovieDao: UserMovieDao,
     val userDao: UserDao
 ) : ViewModel() {
-    var movie : Movie = Movie(999, "Default", MovieCategories.SCIFI, "Should", 2, "Not", "Happen", null);
+    var movie : Movie = Movie(999, "Default", MovieCategories.SCIFI, "Should", 2.0, "Not", "Happen", null);
     var watched = false;
     var watchlist = false;
-
-    fun clear(){
-        watched = false
-        watchlist = false
-    }
 
     fun getMovie(movieId: Int) : Movie{
         viewModelScope.launch {

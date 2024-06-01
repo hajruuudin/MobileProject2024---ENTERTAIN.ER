@@ -33,10 +33,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.entertainer.data.SessionManager
 import com.example.entertainer.model.MovieCategories
 import com.example.entertainer.ui.Screen
 import com.example.entertainer.ui.components.GenericSmallTextField
@@ -49,21 +51,21 @@ import com.example.entertainer.ui.theme.UIBackground
 import com.example.entertainer.viewmodel.MoviesViewModel
 import com.example.entertainer.viewmodel.WatchlistViewModel
 
+/* Movies Screen */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MoviesScreen(
     navController: NavController,
     viewModel: MoviesViewModel
 ){
+    val userId = SessionManager.getUserId()
     LaunchedEffect(Unit){
         viewModel.getAllMovies()
     }
 
-    var search by remember {
-        mutableStateOf("")
-    }
-    var showButton = true;
-
+    var search by remember { mutableStateOf("") }
+    /* USE THIS TO DETERMINE IF THE USER IS AN ADMIN */
+    var showButton = if (userId == 1) true else false;
 
     Scaffold(
         floatingActionButton = {
@@ -139,25 +141,33 @@ fun MoviesScreen(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                LazyColumn(){
-                    items(viewModel.movies){movie ->
-                        MovieCardMedium(
-                            movie = movie,
-                            onCardClick = {
-                                          navController.navigate(Screen.ItemInfoScreen.route + "/" + movie.id)
-                            },
-                        )
+                if(viewModel.movies.isEmpty()){
+                    Text(
+                        text = "No movies!",
+                        style = Typography.headlineLarge,
+                        color = Light
+                    )
+                    Text(
+                        text = "We can't find anything",
+                        style = Typography.labelMedium,
+                        color = Color.LightGray
+                    )
+                } else {
+                    LazyColumn(){
+                        items(viewModel.movies){movie ->
+                            MovieCardMedium(
+                                movie = movie,
+                                onCardClick = {
+                                    navController.navigate(Screen.ItemInfoScreen.route + "/" + movie.id)
+                                },
+                            )
 
-                        Spacer(modifier = Modifier.height(15.dp))
+                            Spacer(modifier = Modifier.height(15.dp))
+                        }
                     }
                 }
+
             }
         }
     }
 }
-
-//@Preview(showSystemUi = true, showBackground = true)
-//@Composable
-//fun MoviesPreview(){
-//    MoviesScreen()
-//}

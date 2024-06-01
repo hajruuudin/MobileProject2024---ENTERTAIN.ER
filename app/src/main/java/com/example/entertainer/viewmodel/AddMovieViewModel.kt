@@ -14,7 +14,6 @@ class AddMovieViewModel(
     val userDao: UserDao
 ) : ViewModel() {
 
-
     fun addMovie(movie: Movie){
         viewModelScope.launch {
             movieDao.insert(movie)

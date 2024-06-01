@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -43,6 +44,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.entertainer.R
 import com.example.entertainer.data.Movie
 import com.example.entertainer.data.UserMovie
@@ -54,8 +56,15 @@ import com.example.entertainer.ui.theme.Light
 import com.example.entertainer.ui.theme.NavbarBg
 import com.example.entertainer.ui.theme.Typography
 import com.example.entertainer.model.MovieCategories
+import com.example.entertainer.ui.Screen
+import com.example.entertainer.ui.theme.Action
+import com.example.entertainer.ui.theme.Comedy
 import com.example.entertainer.ui.theme.DarkSoft
+import com.example.entertainer.ui.theme.Horror
+import com.example.entertainer.ui.theme.Romance
+import com.example.entertainer.ui.theme.SciFi
 
+/* Logo and Heading composable for the log in page */
 @Composable
 fun LogoAndHeading() {
     Image(
@@ -73,6 +82,50 @@ fun LogoAndHeading() {
     )
 }
 
+@Composable
+fun SignUpComponent(
+    navController: NavController
+) {
+    Text(
+        text = "Don't have an account?",
+        style = Typography.bodySmall,
+        color = Light
+    )
+
+    TextButton(onClick = {navController.navigate(Screen.SignUpScreen.route)}) {
+        Text(
+            text = "Sign Up!",
+            fontSize = 20.sp,
+            fontFamily = KubhmSansFont,
+            fontWeight = FontWeight.Bold,
+            color = Light
+        )
+    }
+}
+
+@Composable
+fun LogInComponent(
+    navController: NavController
+) {
+    Text(
+        text = "Have an account?",
+
+        style = Typography.bodySmall,
+        color = Light
+    )
+
+    TextButton(onClick = {navController.navigate(Screen.LogInScreen.route)}) {
+        Text(
+            text = "Log In!",
+            fontSize = 20.sp,
+            fontFamily = KubhmSansFont,
+            fontWeight = FontWeight.Bold,
+            color = Light
+        )
+    }
+}
+
+/* Text fields for all pages */
 @Composable
 fun GenericTextField(
     value: String,
@@ -181,7 +234,6 @@ fun GenericSmallTextField(
     )
 }
 
-// Email Text Field Composable:
 @Composable
 fun EmailTextField(
     value: String,
@@ -220,7 +272,6 @@ fun EmailTextField(
     )
 }
 
-// Password Text Field Composable:
 @Composable
 fun PasswordTextField(
     value: String,
@@ -275,6 +326,7 @@ fun PasswordTextField(
     )
 }
 
+/* Navbar composable for all pages with navigation routes */
 @Composable
 fun Navbar(
     onHomeClick : () -> Unit,
@@ -333,14 +385,11 @@ fun Navbar(
     }
 }
 
+/* Movie cards: Large, Medium, Small */
 @Composable
 fun MovieCardLarge(
+    movie: Movie,
     onCardClick: () -> Unit,
-    title: String,
-    genre: MovieCategories,
-    duration: Int,
-    director: String,
-    rating: String
 ){
     Card(
         colors = CardDefaults.cardColors(
@@ -348,17 +397,30 @@ fun MovieCardLarge(
         ),
         modifier = Modifier
             .width(350.dp)
-            .clickable { }
+            .clickable {
+                onCardClick()
+            }
     ) {
         Row {
-            Image(
-                painter = painterResource(id = R.drawable.defaultcover),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(width = 160.dp, height = 250.dp)
-                    .clip(shape = RoundedCornerShape(15.dp)),
-                contentScale = ContentScale.FillBounds
-            )
+            if(movie.image != null) {
+                Image(
+                    bitmap = convertToImageBitmap(movie.image),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(width = 160.dp, height = 250.dp)
+                        .clip(shape = RoundedCornerShape(15.dp)),
+                    contentScale = ContentScale.FillBounds
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.defaultcover),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(width = 160.dp, height = 250.dp)
+                        .clip(shape = RoundedCornerShape(15.dp)),
+                    contentScale = ContentScale.FillBounds
+                )
+            }
 
             Spacer(modifier = Modifier.width(10.dp))
 
@@ -366,7 +428,7 @@ fun MovieCardLarge(
                 modifier = Modifier.padding(vertical = 20.dp, horizontal = 10.dp)
             ) {
                 Text(
-                    text = title,
+                    text = movie.title,
                     style = Typography.headlineSmall,
                     color = Light
                 )
@@ -377,7 +439,7 @@ fun MovieCardLarge(
                     withStyle(style = SpanStyle(fontFamily = KubhmSansFont, fontWeight = FontWeight.Bold)){
                         append("Genre: ")
                     }
-                    append(genre.value)
+                    append(movie.genre.value)
                 }
                 Text(text = genre, color = Light, fontSize = 18.sp)
 
@@ -387,7 +449,7 @@ fun MovieCardLarge(
                     withStyle(style = SpanStyle(fontFamily = KubhmSansFont, fontWeight = FontWeight.Bold)){
                         append("Duration: ")
                     }
-                    append(duration.toString())
+                    append(movie.duration.toString())
                 }
                 Text(text = duration, color = Light, fontSize = 18.sp)
 
@@ -397,7 +459,7 @@ fun MovieCardLarge(
                     withStyle(style = SpanStyle(fontFamily = KubhmSansFont, fontWeight = FontWeight.Bold)){
                         append("Director: ")
                     }
-                    append(director)
+                    append(movie.director)
                 }
                 Text(text = director, color = Light, fontSize = 18.sp)
 
@@ -407,7 +469,7 @@ fun MovieCardLarge(
                     withStyle(style = SpanStyle(fontFamily = KubhmSansFont, fontWeight = FontWeight.Bold)){
                         append("Rating: ")
                     }
-                    append(rating)
+                    append(movie.rating)
                 }
                 Text(text = rating, color = Light, fontSize = 18.sp)
             }
@@ -415,16 +477,19 @@ fun MovieCardLarge(
     }
 }
 
-
 @Composable
 fun MovieCardMedium(
     movie: Movie,
     onCardClick: () -> Unit
 ){
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = DarkBg
-        ),
+        colors = when(movie.genre.value){
+            "Action" -> CardDefaults.cardColors(containerColor = Action)
+            "Romance" -> CardDefaults.cardColors(containerColor = Romance)
+            "Comedy" -> CardDefaults.cardColors(containerColor = Comedy)
+            "Horror" -> CardDefaults.cardColors(containerColor = Horror)
+            else -> CardDefaults.cardColors(containerColor = SciFi)
+        },
         modifier = Modifier
             .width(350.dp)
             .clickable {
@@ -506,9 +571,13 @@ fun MovieCardSmall(
     onCardClick: () -> Unit
 ){
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = DarkBg
-        ),
+        colors = when(movie.genre.value){
+            "Action" -> CardDefaults.cardColors(containerColor = Action)
+            "Romance" -> CardDefaults.cardColors(containerColor = Romance)
+            "Comedy" -> CardDefaults.cardColors(containerColor = Comedy)
+            "Horror" -> CardDefaults.cardColors(containerColor = Horror)
+            else -> CardDefaults.cardColors(containerColor = SciFi)
+        },
         modifier = Modifier
             .width(300.dp)
             .height(120.dp)
@@ -582,7 +651,7 @@ fun MovieCardSmall(
 }
 
 
-
+/* Previews used for the cards
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun MovieCardLargePreview(){
@@ -596,26 +665,27 @@ fun MovieCardLargePreview(){
     )
 }
 
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun MovieCardMediumPreview(){
-//    MovieCardMedium(
-//        onCardClick = {},
-//        title = "Fast and Furious 7",
-//        genre = MovieCategories.ACTION,
-//        duration = 3,
-//        rating = "5 stars"
-//    )
-//}
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun MovieCardMediumPreview(){
+    MovieCardMedium(
+        onCardClick = {},
+        title = "Fast and Furious 7",
+        genre = MovieCategories.ACTION,
+        duration = 3,
+        rating = "5 stars"
+    )
+}
 
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun MovieCardSmallPreview(){
-//    MovieCardSmall(
-//        onCardClick = {},
-//        title = "Fast and Furious 7",
-//        genre = MovieCategories.ACTION,
-//        duration = 3,
-//        rating = "5 stars"
-//    )
-//}
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun MovieCardSmallPreview(){
+    MovieCardSmall(
+        onCardClick = {},
+        title = "Fast and Furious 7",
+        genre = MovieCategories.ACTION,
+        duration = 3,
+        rating = "5 stars"
+    )
+}
+*/
