@@ -1,4 +1,6 @@
-# entertain.er - Movie Tracking App
+# entertain.er - Movie Tracking App\
+
+Android application developed using Kotlin and Compose for UI development, Room for database technology, and follows the MVVM architecture. It serves as a movie tracking app, enabling users to log in, browse movies, add them to watchlists, mark them as watched, view movie descriptions, genres, duration, actors, and their own profiles along with stats.
 
 ## Version: 1.0
 ## Overview
